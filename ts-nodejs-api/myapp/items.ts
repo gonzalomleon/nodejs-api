@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 const itemsApp = express();
 
 import DbOper from "./DbOper";
@@ -22,14 +22,18 @@ const data = [
 //     next();
 //   });
 
-itemsApp.get("/", (request, response, next) => async () => {
-  // await main().catch(console.error);
-  response.status(200).json(data);
+itemsApp.get("/", async (request, response, next) => {
+  const items = await DbOper.getItems().catch(console.error);
+  if (items != null) {
+    response.status(200).json(items);
+  } else {
+    response.status(500);
+  }
 });
 
 itemsApp.get("/:id", (req, res, next) => {
   // get itemIds from data array
-  const found = data.find(  (item) => {
+  const found = data.find((item) => {
     return item.id === parseInt(req.params.id);
   });
 
@@ -43,7 +47,7 @@ itemsApp.get("/:id", (req, res, next) => {
 // CREATE
 // this api end-point add new object to item list
 // that is add new object to `data` array
-itemsApp.put("/:id", async function (req, res, next) {
+itemsApp.put("/:id", async (req, res, next) => {
   // get itemIds from data array
   const itemIds = data.map((item) => item.id);
   //console.log(itemIds);
@@ -55,7 +59,7 @@ itemsApp.put("/:id", async function (req, res, next) {
   } else {
     // create new id (basically +1 of last item object)
     const newId = parseInt(req.params.id); //itemIds.length > 0 ? Math.max.apply(Math, itemIds) + 1 : 1;
-
+    console.log(req.body);
     // create an object of new Item
     const newItem = {
       id: newId, // generated in above step
@@ -64,12 +68,16 @@ itemsApp.put("/:id", async function (req, res, next) {
     };
 
     // push new item object to data array of items
-    data.push(newItem);
-    await DbOper.saveItem(newItem);
+    const result = await DbOper.saveItem(newItem);
     // return with status 201
     // 201 means Created. The request has been fulfilled and
     // has resulted in one or more new resources being created.
-    res.status(201).json(newItem);
+    if (result) {
+      data.push(newItem);
+      res.status(201).json(newItem);
+    } else {
+      res.status(500);
+    }
   }
 });
 
@@ -78,7 +86,7 @@ itemsApp.put("/:id", async function (req, res, next) {
 // for that we get `id` and `title` from api end-point of item to update
 itemsApp.patch("/:id", (req, res, next) => {
   // get item object match by `id`
-  const found = data.find( (item) => {
+  const found = data.find((item) => {
     return item.id === parseInt(req.params.id);
   });
   console.log(found);
