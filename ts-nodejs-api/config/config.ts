@@ -3,8 +3,8 @@ const config = {
       hostname: 'dev.example.com',
       // mongo database
       mongo : {
-          uri : process.env.MONGO_URI || 'localhost',
-          db : 'example_dev',
+          uri : "mongodb+srv://mongo-dbuser-test:mysq1@cluster0.lnlte.mongodb.net/db-test?retryWrites=true&w=majority",
+          db : 'db-test',
       },
 };
 

@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cors());
 //app.use(app.router);
 /*app.use(express.static(path.join(__dirname, 'public')));*/
-
+const loginRouter = require("./login");
 const itemsRouter = require("./items");
 // create new app
 
@@ -35,6 +35,7 @@ const itemsRouter = require("./items");
 // });
 
 app.use("/api/items", itemsRouter);
+app.use("/api/login", loginRouter);
 
 // default URL to API
 app.use("/", function (req, res) {
@@ -44,9 +45,10 @@ app.use("/", function (req, res) {
 const server = https.createServer(httpsOptions, app);
 const port = 3003;
 server.listen(port);
-console.debug("Server listening on port " + port);
-
+console.debug("https://localhost:" + port + "/api/items");
+console.debug("http://localhost:" + port + "/api/login");
 const serverv = http.createServer(app);
 const portv = 3002;
 serverv.listen(portv);
-console.debug("Server listening on port " + portv);
+console.debug("https://localhost:" + portv + "/api/items");
+console.debug("http://localhost:" + portv + "/api/login");
